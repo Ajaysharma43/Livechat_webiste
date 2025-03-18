@@ -3,9 +3,8 @@ import { io } from "socket.io-client";
 import { motion } from "framer-motion";
 import { Send, User } from "lucide-react";
 
-const socket = io(`${import.meta.env.VITE_SOCKET_URL}`); // Connect to the backend
-
 const Chat = () => {
+    const socket = io(`${import.meta.env.VITE_SOCKET_URL}`); // Connect to the backend
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
     const [typing, setTyping] = useState(null);
