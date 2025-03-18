@@ -76,10 +76,10 @@ const Chat = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4 bg-gray-100 rounded-lg shadow-lg h-[80vh] flex flex-col">
+    <div className="max-w-lg mx-auto p-4 bg-gradient-to-br from-gray-400 via-gray-600 to-gray-800 rounded-2xl shadow-xl h-[80vh] flex flex-col border border-gray-700">
       {/* Chat Header */}
-      <div className="flex items-center justify-between bg-blue-600 text-white p-3 rounded-t-lg">
-        <h2 className="text-lg font-bold">Live Chat</h2>
+      <div className="flex items-center justify-between bg-transparent text-white p-4 rounded-t-2xl border-b border-gray-700">
+        <h2 className="text-lg font-semibold">Live Chat</h2>
         <div className="flex items-center gap-2">
           <User className="w-5 h-5" />
           <span className="text-sm">{user ? user : "Not Connected"}</span>
@@ -89,23 +89,23 @@ const Chat = () => {
       {/* Chat Messages */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto bg-white p-3 border rounded-lg flex flex-col space-y-2"
+        className="flex-1 overflow-y-auto bg-white p-3 border-x border-gray-700 rounded-b-2xl flex flex-col space-y-2"
       >
         {chat.map((msg, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`max-w-[70%] p-3 rounded-lg ${
+            className={`flex gap-2 items-center max-w-[70%] p-3 rounded-lg shadow-md border border-gray-700 ${
               msg.sender === user
-                ? "bg-blue-500 text-white self-end"
-                : "bg-gray-300 text-black self-start"
+                ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white self-end"
+                : "bg-gray-900 text-gray-300 self-start"
             }`}
           >
-            <span className="text-sm font-semibold">
+            <span className="text-xs font-semibold text-gray-400">
               {msg.sender === user ? "You" : msg.sender}
             </span>
-            <p>{msg.text}</p>
+            <p className="text-sm">{msg.text}</p>
           </motion.div>
         ))}
 
@@ -138,13 +138,13 @@ const Chat = () => {
             handleTyping();
           }}
           placeholder="Type a message..."
-          className="flex-1 p-2 border rounded-lg focus:outline-none"
+          className="flex-1 p-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-2 flex items-center gap-1 hover:bg-blue-600 transition"
+          className="bg-white text-black px-4 py-2 rounded-lg ml-2 flex items-center gap-1 hover:from-gray-600 hover:to-gray-700 transition"
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-7 h-7" />
         </button>
       </form>
     </div>
