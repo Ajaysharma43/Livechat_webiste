@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UploadFile } from '../../../Redux/features/uploadreducer';
 
 const FileUpload = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const dispatch = useDispatch();
+    const formref = useRef()
 
     const handleFileChange = (event) => {
         const filesArray = Array.from(event.target.files); // Convert FileList to array
@@ -30,12 +31,13 @@ const FileUpload = () => {
         }
     
         dispatch(UploadFile({formData})); // Pass formData directly
+        formref.current.reset()
     };
 
     return (
         <div className="flex flex-col items-center p-4">
             <h1 className="text-red-300 text-2xl mb-4">Upload</h1>
-            <form onSubmit={handleUpload} encType='multipart/form-data'>
+            <form onSubmit={handleUpload} encType='multipart/form-data' ref={formref}>
                 <input 
                     type="file" 
                     accept="image/*" 
