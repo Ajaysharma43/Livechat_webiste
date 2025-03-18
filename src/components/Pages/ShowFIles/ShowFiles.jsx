@@ -28,11 +28,11 @@ const Files = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Images.map((item, index) => (
                     <Link to={`/chat`} key={index}>
-                        <div className="overflow-hidden rounded-lg shadow-md">
+                        <div className={`${index == 0? "hidden" : "overflow-hidden rounded-lg shadow-md"}`}>
                             <img 
                                 src={item} 
                                 alt={`Uploaded file ${index}`} 
-                                className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                                className={` ${index == 0? "hidden" : "w-full h-48 object-cover transition-transform duration-300 hover:scale-105"}`}
                             />
                         </div>
                     </Link>
