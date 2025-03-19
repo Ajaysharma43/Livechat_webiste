@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { motion } from "framer-motion";
 import { Send, User } from "lucide-react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const Chat = () => {
-    const socketRef = useRef();
-    const typingTimeoutRef = useRef();
-    const chatContainerRef = useRef(null);
-
+    const [socket, setSocket] = useState(null);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
     const [typing, setTyping] = useState(null);
     const [user, setUser] = useState("");
+    const [chatContainerRef, setChatContainerRef] = useState(null);
 
     const Token = sessionStorage.getItem("AccessToken");
     let decoded;
@@ -23,56 +21,55 @@ const Chat = () => {
     }
 
     useEffect(() => {
-        socketRef.current = io(`${import.meta.env.VITE_API_URL}`);
+        const newSocket = io(import.meta.env.VITE_API_URL);
+        setSocket(newSocket);
 
-        socketRef.current.on("connect", () => {
-            console.log("Connected to server:", socketRef.current.id);
+        newSocket.on("connect", () => {
+            console.log("Connected to server:", newSocket.id);
             setUser(decoded?.id || "Guest");
         });
 
-        socketRef.current.on("previousMessages", (prevMessages) => {
-          setChat(prevMessages);
-      });
-
-        socketRef.current.on("userTyping", (username) => {
-            if (username !== user) {
-                setTyping(username);
-            }
+        newSocket.on("previousMessages", (prevMessages) => {
+            setChat(prevMessages);
         });
 
-        socketRef.current.on("userStoppedTyping", () => {
+        newSocket.on("userTyping", (username) => {
+            if (username !== user) setTyping(username);
+        });
+
+        newSocket.on("userStoppedTyping", () => {
             setTyping(null);
         });
 
-        socketRef.current.on("receiveMessage", (data) => {
+        newSocket.on("receiveMessage", (data) => {
             if (data.sender !== user) {
                 setChat((prevChat) => [...prevChat, data]);
             }
         });
 
-        socketRef.current.on("disconnect", () => {
+        newSocket.on("disconnect", () => {
             console.log("Disconnected from server");
         });
 
         return () => {
-            socketRef.current.disconnect();
+            newSocket.disconnect();
         };
     }, [user]);
 
     useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
+        if (chatContainerRef) {
+            chatContainerRef.scrollTop = chatContainerRef.scrollHeight;
         }
     }, [chat, typing]);
 
     const handleTyping = () => {
-        socketRef.current.emit("typing", user);
-        clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = setTimeout(() => {
-            socketRef.current.emit("stopTyping", user);
-            setTyping(null);
-        }, 2000);
+        if (socket) {
+            socket.emit("typing", user);
+            setTimeout(() => {
+                socket.emit("stopTyping", user);
+                setTyping(null);
+            }, 2000);
+        }
     };
 
     const sendMessage = (e) => {
@@ -80,9 +77,11 @@ const Chat = () => {
         if (message.trim() === "") return;
 
         const newMessage = { text: message, sender: user };
-        socketRef.current.emit("sendMessage", newMessage);
-        setChat((prevChat) => [...prevChat, newMessage]);
-        setMessage("");
+        if (socket) {
+            socket.emit("sendMessage", newMessage);
+            setChat((prevChat) => [...prevChat, newMessage]);
+            setMessage("");
+        }
     };
 
     return (
@@ -92,13 +91,13 @@ const Chat = () => {
                 <h2 className="text-lg font-semibold">Live Chat</h2>
                 <div className="flex items-center gap-2">
                     <User className="w-5 h-5" />
-                    <span className="text-sm">{user ? user : "Not Connected"}</span>
+                    <span className="text-sm">{user || "Not Connected"}</span>
                 </div>
             </div>
 
             {/* Chat Messages */}
             <div
-                ref={chatContainerRef}
+                ref={setChatContainerRef}
                 className="flex-1 overflow-y-auto bg-white p-3 border-x border-gray-700 rounded-b-2xl flex flex-col space-y-2"
             >
                 {chat.map((msg, index) => (
