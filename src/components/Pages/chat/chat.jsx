@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { motion } from "framer-motion";
 import { Send, User } from "lucide-react";
+import { jwtDecode } from 'jwt-decode'
 
 const Chat = () => {
   const socket = io(`${import.meta.env.VITE_SOCKET_URL}`); // Connect to the backend
@@ -12,10 +13,13 @@ const Chat = () => {
   const chatContainerRef = useRef(null);
   let typingTimeout;
 
+  const Token = sessionStorage.getItem('AccessToken')
+  const decoded = jwtDecode(Token)
+
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
-      setUser(`User_${Date.now()}`);
+      setUser(`${decoded.id}`);
     });
 
     socket.on("userTyping", (username) => {
