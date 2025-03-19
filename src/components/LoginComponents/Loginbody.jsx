@@ -3,8 +3,8 @@ import { TextField, Button, Typography, Box, Container, Paper, Grid } from '@mui
 
 const LoginBody = () => {
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
+        Email: '',
+        Password: '',
     });
 
     const handleChange = (e) => {
@@ -15,7 +15,6 @@ const LoginBody = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Login Data Submitted:", formData);
-        // Add your login logic here
     };
 
     return (
@@ -29,9 +28,9 @@ const LoginBody = () => {
                         <TextField
                             fullWidth
                             label="Email"
-                            name="email"
+                            name="Email"
                             type="email"
-                            value={formData.email}
+                            value={formData.Email}
                             onChange={handleChange}
                             variant="outlined"
                             required
@@ -41,9 +40,9 @@ const LoginBody = () => {
                         <TextField
                             fullWidth
                             label="Password"
-                            name="password"
+                            name="Password"
                             type="password"
-                            value={formData.password}
+                            value={formData.Password}
                             onChange={handleChange}
                             variant="outlined"
                             required

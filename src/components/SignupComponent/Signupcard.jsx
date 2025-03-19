@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextField, Button, Typography, Box, Container, Grid, Paper } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Signup } from '../../Redux/features/Authenticate';
 
 const SignupCard = () => {
+    const formref = useRef()
+    const message = useSelector((state) => state.Authreducer.Message)
     const [formData, setFormData] = useState({
         Username: '',
         Email: '',
@@ -28,7 +30,12 @@ const SignupCard = () => {
             dispatch(Signup({formData}))
         }
         console.log("Form Data Submitted:", formData);
-        // Add your signup logic here
+        setFormData({
+            Username: '',
+            Email: '',
+            Password: '',
+            confirmPassword: '',
+        });
     };
 
     return (
@@ -37,12 +44,13 @@ const SignupCard = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Sign Up
                 </Typography>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} ref={formref}>
+                    <h1 className='uppercase font-black text-yellow-400'>{message}</h1>
                     <Box sx={{ marginBottom: 2 }}>
                         <TextField
                             fullWidth
                             label="Username"
-                            name="username"
+                            name="Username"
                             value={formData.Username}
                             onChange={handleChange}
                             variant="outlined"
@@ -53,7 +61,7 @@ const SignupCard = () => {
                         <TextField
                             fullWidth
                             label="Email"
-                            name="email"
+                            name="Email"
                             type="email"
                             value={formData.Email}
                             onChange={handleChange}
@@ -65,7 +73,7 @@ const SignupCard = () => {
                         <TextField
                             fullWidth
                             label="Password"
-                            name="password"
+                            name="Password"
                             type="password"
                             value={formData.Password}
                             onChange={handleChange}
