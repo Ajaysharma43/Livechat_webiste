@@ -131,9 +131,9 @@ const Chat = () => {
           value={message}
           onChange={(e) => {setMessage(e.target.value); handleTyping()}}
           placeholder="Type a message..."
-          className="flex-1 p-3 border rounded-lg"
+          className="flex-1 p-3 border rounded-lg transition-all duration-200 text-white focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-teal-400"
         />
-        <button type="submit" className="bg-white text-black px-4 py-2 rounded-lg ml-2">
+        <button type="submit" className="bg-white text-black px-4 py-2 rounded-lg ml-2 transition-all duration-200 hover:bg-gray-200 hover:text-gray-950">
           <Send className="w-7 h-7" />
         </button>
       </form>
