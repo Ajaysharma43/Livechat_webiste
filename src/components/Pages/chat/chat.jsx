@@ -12,6 +12,7 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [user, setUser] = useState("");
+  const [typingUser, setTypingUser] = useState(null);
 
   const Token = sessionStorage.getItem("AccessToken");
   let decoded;
@@ -28,6 +29,14 @@ const Chat = () => {
     newSocket.on("connect", () => {
       console.log("Connected to server:", newSocket.id);
       setUser(decoded?.id || "Guest");
+
+      newSocket.on("userTyping", (username) => {
+        if (username !== user) setTypingUser(username);
+      });
+  
+      newSocket.on("userStoppedTyping", () => {
+        setTypingUser(null);
+      });
 
       // Join the room
       newSocket.emit("joinRoom", Roomid);
@@ -63,6 +72,16 @@ const Chat = () => {
     }
   };
 
+  const handleTyping = () => {
+    if (socket) {
+      socket.emit("typing", { room: Roomid, username: user });
+
+      setTimeout(() => {
+        socket.emit("stopTyping", { room: Roomid, username: user });
+      }, 2000);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-4 bg-gray-800 rounded-2xl shadow-xl h-[80vh] flex flex-col">
       <div className="flex items-center justify-between text-white p-4">
@@ -91,13 +110,26 @@ const Chat = () => {
             <p className="text-sm">{msg.text}</p>
           </motion.div>
         ))}
+        {typingUser && (
+          <motion.div
+            className="text-gray-500 flex items-center gap-1 self-start"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ repeat: Infinity, duration: 1 }}
+          >
+            {typingUser} is typing...
+          </motion.div>
+        )}
       </div>
+
+      
 
       <form onSubmit={sendMessage} className="mt-3 flex items-center">
         <input
           type="text"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {setMessage(e.target.value); handleTyping()}}
           placeholder="Type a message..."
           className="flex-1 p-3 border rounded-lg"
         />
