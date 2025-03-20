@@ -43,7 +43,7 @@ const FileUpload = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gray-900">
+        <div className="flex flex-col items-center justify-center min-h-[100vh] bg-gray-900">
             <motion.div 
                 className="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-lg m-3"
                 initial={{ opacity: 0, scale: 0.9 }}
