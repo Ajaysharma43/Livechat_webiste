@@ -27,7 +27,7 @@ const Files = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Images.map((item, index) => (
-                    <Link to={`/chat`} key={index}>
+                    <Link to={`/chat/${encodeURIComponent(item)}`} key={index}>
                         <div className={`${index == 0? "hidden" : "overflow-hidden rounded-lg shadow-md"}`}>
                             <img 
                                 src={item} 

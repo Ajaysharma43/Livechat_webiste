@@ -30,7 +30,7 @@ const Routes = () => {
           <Chat />
         </AuthMiddleware>
       ),
-      path: "/chat",
+      path: "/chat/:id",
     },
     { element: <Signup />, path: "/signup" },
     { element: <Login />, path: "/login" },
