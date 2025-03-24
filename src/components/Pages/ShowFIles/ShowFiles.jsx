@@ -12,7 +12,7 @@ const Files = () => {
     const [loading, setLoading] = useState(false);
     
     useEffect(() => {
-        dispatch(GetFiles()); // Fetch all images once
+        dispatch(GetFiles()); 
     }, [dispatch]);
 
     useEffect(() => {
@@ -50,7 +50,7 @@ const Files = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {Images.slice(0, displayLimit).map((item, index) => ( // ✅ Show only limited images
+                {Images.slice(1, displayLimit).map((item, index) => ( // ✅ Show only limited images
                     <Link to={`/chat/${encodeURIComponent(item)}`} key={index}>
                         <div className="overflow-hidden rounded-lg shadow-md">
                             <img 
@@ -63,7 +63,6 @@ const Files = () => {
                 ))}
             </div>
 
-            {/* Loading Spinner */}
             {loading && (
                 <div className="flex justify-center mt-4">
                     <div className="border-t-4 border-teal-600 w-[50px] rounded-full h-[50px] animate-spin"></div>
