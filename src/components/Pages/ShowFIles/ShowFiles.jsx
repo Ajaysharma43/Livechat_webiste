@@ -4,41 +4,43 @@ import { GetFiles } from "../../../Redux/features/uploadreducer";
 import { Link, useNavigate } from "react-router-dom";
 
 const Files = () => {
-    const Images = useSelector((state) => state.uploadFileReducer.Data);
+    const Images = useSelector((state) => state.uploadFileReducer.Data); // All fetched images
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [limit, setLimit] = useState(15);
+    
+    const [displayLimit, setDisplayLimit] = useState(15); // Controls visible images
+    const [loading, setLoading] = useState(false);
+    
+    useEffect(() => {
+        dispatch(GetFiles()); // Fetch all images once
+    }, [dispatch]);
 
     useEffect(() => {
         const handleScroll = () => {
             const scrollTop = window.scrollY;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
-
-            // Check if user has scrolled to 100% of the page
-            if (scrollTop + windowHeight >= documentHeight - 10) { // Added -10 for slight buffer
-                console.log("Scrolled 100%, showfiles is called");
-                
-                // Example: Increase the limit dynamically when scrolled to the bottom
-                setLimit((prevLimit) => prevLimit + 10);
+    
+            // ✅ Ensure Images is available before checking its length
+            if (Images.length > 0 && scrollTop + windowHeight >= documentHeight - 10 && !loading && displayLimit < Images.length) {
+                setLoading(true);
+                setTimeout(() => {
+                    setDisplayLimit((prevLimit) => prevLimit + 10);
+                    setLoading(false);
+                }, 3000);
             }
         };
-
+    
         window.addEventListener("scroll", handleScroll);
-
+        
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
-    }, []);
-
-    useEffect(() => {
-        dispatch(GetFiles({ limit }));
-        console.log("Fetching files with limit:", limit);
-    }, [dispatch, limit]);
+    }, [loading, Images.length]); // ✅ Add Images.length as a dependency
+    
 
     return (
         <div className="p-4">
-            {/* Button to navigate to Upload Route */}
             <div className="flex justify-end mb-4">
                 <button 
                     onClick={() => navigate("/upload")} 
@@ -49,18 +51,25 @@ const Files = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {Images.map((item, index) => (
+                {Images.slice(0, displayLimit).map((item, index) => ( // ✅ Show only limited images
                     <Link to={`/chat/${encodeURIComponent(item)}`} key={index}>
-                        <div className={`${index === 0 ? "hidden" : "overflow-hidden rounded-lg shadow-md"}`}>
+                        <div className="overflow-hidden rounded-lg shadow-md">
                             <img 
                                 src={item} 
                                 alt={`Uploaded file ${index}`} 
-                                className={`${index === 0 ? "hidden" : "w-full h-48 object-cover transition-transform duration-300 hover:scale-105"}`}
+                                className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
                             />
                         </div>
                     </Link>
                 ))}
             </div>
+
+            {/* Loading Spinner */}
+            {loading && (
+                <div className="flex justify-center mt-4">
+                    <div className="border-t-4 border-teal-600 w-[50px] rounded-full h-[50px] animate-spin"></div>
+                </div>
+            )}
         </div>
     );
 };
