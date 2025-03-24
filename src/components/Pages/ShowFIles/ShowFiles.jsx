@@ -21,7 +21,6 @@ const Files = () => {
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
     
-            // ✅ Ensure Images is available before checking its length
             if (Images.length > 0 && scrollTop + windowHeight >= documentHeight - 10 && !loading && displayLimit < Images.length) {
                 setLoading(true);
                 setTimeout(() => {
