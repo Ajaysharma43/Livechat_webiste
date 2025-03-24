@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetFiles } from "../../../Redux/features/uploadreducer";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,11 +7,34 @@ const Files = () => {
     const Images = useSelector((state) => state.uploadFileReducer.Data);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [limit, setLimit] = useState(15);
 
     useEffect(() => {
-        dispatch(GetFiles());
-        console.log(Images);
-    }, [dispatch]);
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            // Check if user has scrolled to 100% of the page
+            if (scrollTop + windowHeight >= documentHeight - 10) { // Added -10 for slight buffer
+                console.log("Scrolled 100%, showfiles is called");
+                
+                // Example: Increase the limit dynamically when scrolled to the bottom
+                setLimit((prevLimit) => prevLimit + 10);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    useEffect(() => {
+        dispatch(GetFiles({ limit }));
+        console.log("Fetching files with limit:", limit);
+    }, [dispatch, limit]);
 
     return (
         <div className="p-4">
@@ -28,11 +51,11 @@ const Files = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Images.map((item, index) => (
                     <Link to={`/chat/${encodeURIComponent(item)}`} key={index}>
-                        <div className={`${index == 0? "hidden" : "overflow-hidden rounded-lg shadow-md"}`}>
+                        <div className={`${index === 0 ? "hidden" : "overflow-hidden rounded-lg shadow-md"}`}>
                             <img 
                                 src={item} 
                                 alt={`Uploaded file ${index}`} 
-                                className={` ${index == 0? "hidden" : "w-full h-48 object-cover transition-transform duration-300 hover:scale-105"}`}
+                                className={`${index === 0 ? "hidden" : "w-full h-48 object-cover transition-transform duration-300 hover:scale-105"}`}
                             />
                         </div>
                     </Link>

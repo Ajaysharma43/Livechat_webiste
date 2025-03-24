@@ -16,8 +16,8 @@ export const UploadFile = createAsyncThunk('UploadFile', async ({formData}) => {
     return response.data;
 });
 
-export const GetFiles = createAsyncThunk('GetFiles' , async() => {
-    const response = await GetFileInstance.get(`/check?folderName=Images`)
+export const GetFiles = createAsyncThunk('GetFiles' , async({limit}) => {
+    const response = await GetFileInstance.get(`/check?folderName=Images&limit=${limit}`)
     return response.data.files
 })
 
