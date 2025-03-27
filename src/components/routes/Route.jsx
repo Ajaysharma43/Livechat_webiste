@@ -5,13 +5,17 @@ import Chat from "../Pages/chat/chat";
 import Signup from "../Pages/Signup/Signup";
 import Login from "../Pages/Login/login";
 import AuthMiddleware from "../../../Middleware/AuthMiddleware";
+import Unauthorized from "../Pages/Unauthorized/Unauthorized";
+import RoleMiddleware from "../../../Middleware/RoleMiddleware";
 
 const Routes = () => {
   const Route = useRoutes([
     {
       element: (
         <AuthMiddleware>
+          <RoleMiddleware>
           <FileUpload />
+          </RoleMiddleware>
         </AuthMiddleware>
       ),
       path: "/Upload",
@@ -34,6 +38,7 @@ const Routes = () => {
     },
     { element: <Signup />, path: "/signup" },
     { element: <Login />, path: "/login" },
+    {element : <Unauthorized/> , path : '*'}
   ]);
   return Route;
 };
